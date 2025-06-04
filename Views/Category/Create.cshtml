@@ -1,0 +1,19 @@
+﻿@model Categories
+@{
+	ViewBag.Title = "Add New Category";
+}
+
+<h2> Add Category</h2>
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Create" method="post">
+			<div class="form-group">
+				<label asp-for="CategoryName"></label>
+				<input asp-for="CategoryName" class="form-control" />
+				<span asp-validation-for="CategoryName" class="text-danger"></span>
+			</div>
+			<button type="submit" class="btn btn-primary">Add</button>
+			<a asp-action="Index" class="btn btn-secondary text-warning text-center">Back</a>
+		</form>
+	</div>
+</div>

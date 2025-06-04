@@ -1,0 +1,111 @@
+﻿@model Post
+@{
+    ViewBag.Title = "Blog page";
+}
+<div class="text-end col-sm">
+    <a asp-action="Index" class="btn btn-primary text-warning">Back</a>
+</div>
+
+<div class="row">
+
+    <div class="card col-md-6">
+
+        <div class="content-wrapper">
+            <h2 class="text-center">@Model.Title</h2>
+            <p> <span class="badge bg-primary">Published on</span>@Model.CreatedDate.ToString("MMM dd,yyyy")</p>
+        </div>
+
+        
+        <br />
+
+
+        <div>
+            @Html.Raw(Model.Content)
+        </div>
+        <br />
+        <div class="row">
+            <button class="btn btn-primary mx-2" onclick="likepost(@Model.Id)"><i class="bi bi-hand-thumbs-up"> </i></button>
+            <div id="commentSection">
+
+                <textarea id="commentText" rows="3" cols="50" placeholder="add comment..."></textarea>
+                <button id="addCommentBtn" data-post-id="@Model.Id">Add Comment</button>
+                <div id="commentList">
+
+                    @foreach (var comment in Model.Comment)
+                    {
+                        <ul>
+                            @if (comment.User != null)
+                            {
+                                <li>@comment.User.UserName:</li>
+
+                                @comment.Content
+
+
+                            }
+
+                        </ul>
+
+                    }
+                </div>
+
+            </div>
+
+        </div>
+        <br />
+        <br />
+
+    <div>
+            <a asp-action="Index" class="btn btn-primary text-warning">Back</a>
+    </div>
+        
+</div>
+   
+<div class="col-md-6">
+    <img src="@Model.ImageUrl" style="height:35rem;" class="card-img-top fixed-image-height" alt="@Model.Id" />
+
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function likepost(id){
+            $.ajax({
+                type:"Post",
+                url:"@Url.Action("Likepost","Post")",
+                data:{id:id},
+                success:function(){location.reload();}
+            } );
+        }
+
+    $(document).on("click","#addCommentBtn",function(){
+        
+        var postId=$(this).data("post-id");
+        $.ajax({
+            type:"Post",
+            url:"@Url.Action("AddComment", "Post")",
+            data:{
+                postId:postId,
+                commentText:$("#commentText").val()
+            },
+            success:function(data){
+                
+                $("#commentList").append("<p>"+data.commentText +"</p>");
+                $("#commentText").val("");
+            },
+            error:function(xhr,status,error){
+                alert("Error adding comment: " + error);
+            }
+
+        });
+
+    });
+    </script>
+     
+   
+
+
+    
+
+
+
+
+

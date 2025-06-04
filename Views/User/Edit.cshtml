@@ -1,0 +1,160 @@
+﻿@model ApplicationUser
+@{
+	ViewBag.Title = "Update User Profile";
+}
+<div class="w-100 card border-0 p-4">
+    <div class="card-header bg-success bg-gradient m-lg-0 py-3">
+        <div class="row">
+            <div class="col-12">
+                <img src="@Model.ProfileUrl" width="200 "
+                     style="float:right; border-radius:5px; border:1px solid" />
+            </div>
+
+        </div>
+    </div>
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+        <input asp-for="@Model.ProfileUrl" hidden />
+        <div class="row">
+            <div class="form-floating mb-3 col-md-6">
+                <input asp-for="FirstName" class="form-control" aria-required="true" />
+                <label asp-for="FirstName">FirstName</label>
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <input asp-for="LastName" class="form-control" aria-required="true" />
+                <label asp-for="LastName">LastName</label>
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <input asp-for="UserName" class="form-control" aria-required="true" />
+                <label asp-for="UserName">UserName</label>
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="Country" class="control-label"></label>
+                <select asp-for="Country" id="country" class="form-control">
+                    <option value="" disabled selected>--Select Country--</option>
+                </select>
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="State" class="control-label"></label>
+                <select asp-for="State" id="state" class="form-control">
+                    <option value="" disabled selected>--Select State--</option>
+                </select>
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="City" class="control-label"></label>
+                <select asp-for="City" id="city" class="form-control">
+                    <option value="" disabled selected>--Select City--</option>
+                </select>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Bio" class="control-label"></label>
+                <textarea asp-for="Bio" class="form-control" rows="6" cols="30"></textarea>
+                <span asp-validation-for="Bio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProfileUrl" class="control-label"></label>
+                <input asp-for="ProfileUrl" hidden class="form-control" />
+                <input asp-for="file" class="form-control" />
+            </div>
+
+
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Update" class="btn btn-primary" />
+            <a asp-action="Index"asp-controller="Post" class="btn btn-primary text-warning">Back</a>
+        </div>
+
+    </form>
+
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const apiKey="enBzVGZJOWZBSjZaS053NTZJUDFoSkxJM3lKcWpicXBLYzk5SGZ1RQ==";
+        const baseUrl="https://api.countrystatecity.in/v1";
+        $(document).ready(function(){
+            $.ajax({
+                url: `${baseUrl}/countries`,
+                method:'GET',
+                headers: {
+                    "X-CSCAPI-KEY": apiKey
+                },
+                success:function(countries){
+                    $.each(countries, function(index, country) {
+                        $('#country').append(`<option value="${country.iso2}">${country.name}</option>`);
+                    });
+                }
+            });
+            $('#country').change(function() {
+                const countryCode = $(this).val();
+                $('#state').html('<option value=""disabled selected>--Select State--</option>');
+                $('#city').html('<option value="" disabled selected>--Select City--</option>');
+                if (countryCode) {
+                    $.ajax({
+                    url: `${baseUrl}/countries/${countryCode}/states`,
+                    method: 'GET',
+                    headers: {
+                        "X-CSCAPI-KEY": apiKey
+                    },
+                    success: function(states) {
+                        $.each(states, function(index, state) {
+                            $('#state').append(`<option value="${state.iso2}">${state.name}</option>`);
+                        });
+                    }
+                  });
+
+                }
+
+
+            });
+            $('#state').change(function() {
+                const countryCode=$('#country').val();
+                const stateCode=$(this).val();
+                $('#city').html('<option value=""disabled selected>--Select City--</option>');
+                if (countryCode && stateCode){
+                    $.ajax({
+                        url: `${baseUrl}/countries/${countryCode}/states/${stateCode}/cities`,
+                        method: 'GET',
+                        headers: {
+                            "X-CSCAPI-KEY": apiKey
+                        },
+                        success: function(cities) {
+                            $.each(cities, function(index, city) {
+                                $('#city').append(`<option value="${city.name}">${city.name}</option>`);
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.tiny.cloud/1/aslqrj3cnmu6l1apmwze8rcttu1utnemco89ygnkqj4o58ca/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+        selector: 'textarea',
+
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+               tinycomments_mode: 'embedded',
+          tinycomments_author: 'Author name',
+          mergetags_list: [
+            { value: 'First.Name', title: 'First Name' },
+            { value: 'Email', title: 'Email' },
+          ],
+          ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+
+        });
+    </script>
+
+}
+
+
+
+

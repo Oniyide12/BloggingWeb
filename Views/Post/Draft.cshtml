@@ -1,0 +1,68 @@
+﻿@model IEnumerable<PostIndexVM>
+@{
+	ViewBag.Title = "Post";
+}
+<p>
+	<a asp-action="Create" class="btn btn-primary text-success"><i class="bi bi-plus-circle-fill"></i>Create a New Post</a>
+	<a asp-action="Index" class="btn btn-secondary text-warning text-center">Back</a>
+
+</p>
+
+
+
+<div class="w-100" card border-o p-4>
+	<div class="card-header bg-success bg-gradient ml-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h2 class="text-bg-info">Saved Draft</h2>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	@foreach (var item in Model)
+	{
+
+		<div class="col-md-4">
+
+
+			<div class="card-group">
+				<h4 class="card-header">@item.Tittle</h4>
+				<img src="@item.ImageUrl" class="card-img-fluid fixed-image-height" alt="@item.PostId" />
+				<div class="row">
+					<div class="card-body">
+						<div class="paste pale">
+							<h6 class="card-text   px-3 py-0 my-0 mx-0 "> Author: @item.UserName</h6>
+							<p class="card-text  px-3 py-0 mx-0 my-0 ">Catagories:@string.Join(",", item.CategoryName)</p>
+							<p class="card-group px-3 py-0 mx-0 my-0 ">Added Date: @item.CreatedDate</p>
+							
+						</div>
+					</div>
+					<div class="card-footer d-flex justify-content-between align-items-center">
+						<a asp-action="Details" asp-route-id="@item.PostId" class="btn btn-secondary text-success"><i class="bi bi-eye"></i>View</a>
+						<a asp-action="Edit" asp-route-id="@item.PostId" class="btn btn-secondary text-success text-centre"><i class="bi bi-pencil-square"></i>Update</a>
+						<button class="btn btn-danger" onclick="deletePost(@item.PostId)">Delete</button>
+
+
+
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+
+	}
+
+</div>
+<script>
+	function deletePost(id){
+		   $.ajax({
+			   type:"Post",
+			   url:'/Post/Delete',
+			   data:{id:id},
+			   success:function(){location.reload();}
+
+		   } );
+	   }
+</script>

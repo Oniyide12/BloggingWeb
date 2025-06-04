@@ -1,0 +1,82 @@
+﻿@model PostCreateVM
+<div class="w-100 card border-0 p-4">
+    <div class="card-header bg-success bg-gradient m-lg-0 py-3">
+        <div class="row">
+            <div class="col-12">
+                <img src="@Model.Post.ImageUrl" width="200 "
+                style="float:right; border-radius:5px; border:1px solid" />
+            </div>
+
+        </div>
+    </div>
+    <div class="card-body border p-4">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Post.Id" />
+            <input  asp-for="Post.ImageUrl" hidden />
+
+            <div class="col-10">
+                <div class="form-group">
+                    <label asp-for="@Model.Post.Title" class="control-label"></label>
+                    <input asp-for="@Model.Post.Title" class="form-control" />
+                    <span asp-validation-for="@Model.Post.Title" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.Post.Content" class="control-label"></label>
+                    <textarea id="textarea" asp-for="@Model.Post.Content" rows="6" cols="12" class="form-control "></textarea>
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.Categories" class="control-label"></label><br />
+                    @foreach (var category in Model.Categories)
+                    {
+                        <input type="checkbox" name="SelectedCategoryIds" value="@category.Value" />
+                        <label>@category.Text</label> <br />
+                    }
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.Post.ImageUrl" class="control-label"></label>
+                    <input asp-for="@Model.Post.ImageUrl" hidden class="form-control" />
+                    <input asp-for="@Model.Post.file" class="form-control" />
+                    
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.Post.Status" class="control-label"></label>
+                    <select asp-for="@Model.Post.Status" asp-items="Html.GetEnumSelectList<Status>()" class="form-control">
+                        <option value="" disabled selected>--Select Status--</option>
+                    </select>
+                    <span asp-validation-for="@Model.Post.Status" class="text-danger"></span>
+                </div>
+             </div>   
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-primary text-warning text-end">Back</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+@section Scripts {
+
+    <script src="https://cdn.tiny.cloud/1/aslqrj3cnmu6l1apmwze8rcttu1utnemco89ygnkqj4o58ca/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+        selector: 'textarea',
+
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+               tinycomments_mode: 'embedded',
+          tinycomments_author: 'Author name',
+          mergetags_list: [
+            { value: 'First.Name', title: 'First Name' },
+            { value: 'Email', title: 'Email' },
+          ],
+          ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+
+        });
+    </script>
+
+
+
+
+}
+
+

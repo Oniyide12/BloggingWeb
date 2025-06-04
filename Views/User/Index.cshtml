@@ -1,0 +1,75 @@
+﻿@model IEnumerable<ApplicationUser>
+@{
+	ViewBag.Title = "Users Page";
+}
+<h2 class="text-center"> Registered Users</h2>
+<form asp-controller="User" asp-action="Index">
+	<p>
+		<label>First Name &nbsp;<input type="text" name="searchString" /></label>
+		<input type="submit" value="Search" />&nbsp;&nbsp;&nbsp;&nbsp;
+		<div class=" text-end">
+			<a asp-action="Index" class="btn btn-primary text-success">Refresh</a>
+			<a asp-controller="Post" asp-action="Index" class="btn btn-primary text-warning">Back</a>
+		</div>
+	</p>
+</form>
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(Model => Model.LastName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(Model => Model.FirstName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(Model => Model.UserName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(Model => Model.PhoneNumber)
+			</th>
+			<th>
+				@Html.DisplayNameFor(Model => Model.Datejoin)
+			</th>
+			<th>
+
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+
+		@foreach (var item in Model)
+		{
+			using (Html.BeginForm("Delete", "User", new { id = item.Id }))
+			{
+
+				<tr>
+					<td>
+						@Html.DisplayFor(modelItem => item.LastName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.FirstName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.UserName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.PhoneNumber)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.Datejoin)
+					</td>
+
+					
+					<td>
+						<a asp-action="AssignRole" asp-route-id="@item.Id" class="btn btn-secondary text-success text-centre col-sm"><i class="bi bi-pencil-square"></i>Assign Role</a>
+						<input type="submit" value="Remove" class="btn btn-danger text-primary col-sm" onclick="return confirm('Are you sure you want to  Remove @item.UserName')" />
+					</td>
+				</tr>
+			}
+
+
+		}
+
+	</tbody>
+</table>

@@ -1,0 +1,89 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@model IEnumerable<PostIndexVM>
+@{
+	ViewBag.Title = "Post";
+}
+<div class="w-100" card border-o p-4>
+	<div class="card-header bg-success bg-gradient ml-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h2 class="text-bg-info">Blogs Home</h2>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="d-flex justify-content-between pt-2">
+	<a asp-action="Create" class="btn btn-success text-success"><i class="bi bi-plus-circle-fill"></i>Create a New Post</a>
+	<a asp-action="Draft" class="btn btn-secondary text-success"><i class="bi bi-plus-circle-fill"></i>Saved Draft</a>
+</div>
+<form asp-controller="Post" asp-action="Index">
+	<p>
+		<label>Title &nbsp;<input type="text" name="searchString" /></label>
+		<input type="submit" value="Search" />&nbsp;&nbsp;&nbsp;&nbsp;
+		<div class=" text-end">
+			<a asp-action="Index" class="btn btn-primary text-success">Refresh</a>
+			<a asp-controller="Post" asp-action="Index" class="btn btn-primary text-warning">Back</a>
+		</div>
+	</p>
+</form>
+<div class="row">
+	@foreach(var item in Model)
+	{
+
+		<div class="col-md-4 ">
+
+
+			<div class="card-group border-3 ">
+				
+				<h4 class="card-header font-size:18px">@item.Tittle</h4>
+				<img src="@item.ImageUrl" class="card-img-fluid fixed-image-height" alt="@item.PostId" />
+				<div class="row">
+					<div class="card-body pale">
+						
+						@{
+							var content= RemoveTagHelper.RemoveHtmlTags(item.Content);
+						}
+						<p class="card-text px-2 ">
+							@(content.Length > 100 ? content.Substring(0, 100) + "..." : content)
+						</p>
+						<p class="card-text  px-2 py-0 mx-0 my-0 col-sm ">Catagories:@string.Join(",", item.CategoryName)</p>
+						<p class="card-group px-2 py-0 mx-0 my-0 col-sm">Added Date: @item.CreatedDate.ToString("d")</p>
+						<p class="d-flex justify-content-between pt-2"><span class="badge bg-primary"><i class="bi bi-hand-thumbs-up"> @item.Likecount</i></span><span class="badge bg-primary  "><i class="bi bi-chat-left-text"> @item.Commentcount</i></span></p>
+						<div class="paste pale">
+							
+						</div>
+					</div>
+					<div class="card-footer d-flex justify-content-between align-items-center">
+						<a asp-action="Details" asp-route-id="@item.PostId" class="btn btn-secondary btn-sm text-success"><i class="bi bi-eye"></i>Read</a>
+						@if (item.UserId != UserManager.GetUserId(User))
+						{
+							<div class="text-muted">Author: @item.UserName</div>
+							<a asp-action="Details" asp-controller="User" asp-route-id="@item.UserId" class="btn btn-secondary btn-sm text-success text-centre"><i class="bi bi-pencil-square"></i>Author info</a>
+						}
+						@if (item.UserId == UserManager.GetUserId(User))
+						{
+							<a asp-action="Edit" asp-route-id="@item.PostId" class="btn btn-secondary btn-sm text-success text-centre"><i class="bi bi-pencil-square"></i>Edit</a>
+							<button class="btn btn-danger text-danger btn-sm" onclick="deletePost(@item.PostId)"><i class="bi bi-thrash"></i>Delete</button>
+						}
+						</div>
+					</div>
+				</div>
+				
+			
+		</div>
+		
+	}
+	
+</div>
+<script>
+	function deletePost(id){
+		   $.ajax({
+			   type:"Post",
+			   url:'/Post/Delete',
+			   data:{id:id},
+			   success:function(){location.reload();}
+			  
+		   } );
+	   }
+</script>

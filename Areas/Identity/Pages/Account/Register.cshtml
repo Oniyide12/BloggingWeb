@@ -1,0 +1,179 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-4">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="py-2 text-white">Register</h2>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card-body p-4">
+
+<div class="row pt-3">
+    <div class="col-md-12">
+            <form id="registerForm" class="row" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
+            <h2>Create a new account.</h2>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            
+           
+            <div class="form-floating mb-3 col-md-6">
+                <input asp-for="Input.Email" class="form-control" autocomplete="email" aria-required="true" placeholder="name@example.com" />
+                <label asp-for="Input.Email">Email</label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label asp-for="Input.Password">Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+                <div class="form-floating mb-3 col-md-6">
+                    <input asp-for="Input.FirstName" class="form-control" aria-required="true" />
+                    <label asp-for="Input.FirstName">FirstName</label>
+                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+                <div class="form-floating mb-3 col-md-6">
+                    <input asp-for="Input.LastName" class="form-control" aria-required="true" />
+                    <label asp-for="Input.LastName">LastName</label>
+                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+                <div class="form-floating mb-3 col-md-6">
+                    <input asp-for="Input.UserName" class="form-control" aria-required="true" />
+                    <label asp-for="Input.UserName">UserName</label>
+                    <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating">
+                    <label asp-for="Input.Bio" class="control-label"></label>
+                    <textarea asp-for="Input.Bio" class="form-control" rows="6" cols="30"></textarea>
+                    <span asp-validation-for="Input.Bio" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                    <input asp-for="Input.ProfileUrl" class="form-control"  aria-required="true"  />
+                    <label asp-for="Input.ProfileUrl">Profile Picture</label>
+                    <span asp-validation-for="Input.ProfileUrl" class="text-danger"></span>
+            </div>
+                <div class="form-floating mb-3 col-md-6">
+                    <label asp-for="Input.Country" class="control-label"></label>
+                    <select asp-for="Input.Country" id="country" class="form-control">
+                        <option value="" disabled selected >--Select Country--</option>
+                    </select>
+                    <span asp-validation-for="Input.Country" class="text-danger"></span>
+            </div>
+                <div class="form-floating mb-3 col-md-6">
+                    <label asp-for="Input.State" class="control-label"></label>
+                    <select asp-for="Input.State" id="state" class="form-control">
+                        <option value="" disabled selected >--Select State--</option>
+                    </select>
+                    <span asp-validation-for="Input.State" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3 col-md-6">
+                    <label asp-for="Input.City" class="control-label"></label>
+                    <select asp-for="Input.City" id="city" class="form-control">
+                        <option value="" disabled selected >--Select City--</option>
+                    </select>
+                    <span asp-validation-for="Input.City" class="text-danger"></span>
+                </div>
+            <div class="form-floating mb-3 col-md-6">
+                    <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="phone" aria-required="true" placeholder="080" />
+                    <label asp-for="Input.PhoneNumber">PhoneNumber</label>
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+        </form>
+    </div>
+    </div>
+    
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const apiKey="enBzVGZJOWZBSjZaS053NTZJUDFoSkxJM3lKcWpicXBLYzk5SGZ1RQ==";
+        const baseUrl="https://api.countrystatecity.in/v1";
+        $(document).ready(function(){
+            $.ajax({
+				url: `${baseUrl}/countries`,
+                method:'GET',
+				headers: {
+					"X-CSCAPI-KEY": apiKey
+				},
+                success:function(countries){
+					$.each(countries, function(index, country) {
+						$('#country').append(`<option value="${country.iso2}">${country.name}</option>`);
+					});
+                }
+            });
+			$('#country').change(function() {
+				const countryCode = $(this).val();
+                $('#state').html('<option value=""disabled selected>--Select State--</option>');
+                $('#city').html('<option value="" disabled selected>--Select City--</option>');
+				if (countryCode) {
+                    $.ajax({
+                    url: `${baseUrl}/countries/${countryCode}/states`,
+                    method: 'GET',
+                    headers: {
+                        "X-CSCAPI-KEY": apiKey
+                    },
+                    success: function(states) {
+                        $.each(states, function(index, state) {
+                            $('#state').append(`<option value="${state.iso2}">${state.name}</option>`);
+                        });
+                    }
+                  });
+
+                }
+
+				
+			});
+			$('#state').change(function() {
+				const countryCode=$('#country').val();
+				const stateCode=$(this).val();
+                $('#city').html('<option value=""disabled selected>--Select City--</option>');
+				if (countryCode && stateCode){
+					$.ajax({
+						url: `${baseUrl}/countries/${countryCode}/states/${stateCode}/cities`,
+						method: 'GET',
+						headers: {
+							"X-CSCAPI-KEY": apiKey
+						},
+						success: function(cities) {
+							$.each(cities, function(index, city) {
+								$('#city').append(`<option value="${city.name}">${city.name}</option>`);
+							});
+						}
+					});
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.tiny.cloud/1/aslqrj3cnmu6l1apmwze8rcttu1utnemco89ygnkqj4o58ca/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+        selector: 'textarea',
+
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+               tinycomments_mode: 'embedded',
+          tinycomments_author: 'Author name',
+          mergetags_list: [
+            { value: 'First.Name', title: 'First Name' },
+            { value: 'Email', title: 'Email' },
+          ],
+          ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+
+        });
+    </script>
+    
+}

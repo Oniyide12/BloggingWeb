@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Categories>
+@{
+	ViewBag.Title = "Categories page";
+}
+<h2>Categories Page</h2>
+
+
+<p>
+	<a asp-action="Create" class="btn text-success"><i class="bi bi-plus-circle-fill"></i> Add a New Category</a>
+
+</p>
+<form asp-controller="Category" asp-action="Index">
+	<p>
+		<label>Category Name &nbsp;<input type="text" name="searchString" /></label>
+		<input type="submit" value="Search" />&nbsp;&nbsp;&nbsp;&nbsp;
+		<div class=" text-end">
+			<a asp-action="Index" class="btn btn-primary text-success">Refresh</a>
+			<a asp-controller="Post" asp-action="Index" class="btn btn-primary text-warning">Back</a>
+		</div>
+	</p>
+</form>
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(Model => Model.CategoryName)
+			</th>
+			<th>
+
+			</th>
+			<th>
+
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+
+		@foreach (Categories i in Model)
+		{
+			using (Html.BeginForm("Delete", "Category", new { id = i.CategoryId }))
+			{
+
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => i.CategoryName)
+				</td>
+				
+				<td>
+						<a asp-action="Edit" asp-route-id="@i.CategoryId" class="btn btn-secondary text-primary"><i class="bi bi-pencil-square"></i>Edit</a>
+				</td>
+				<td>
+						<input type="submit" value="Remove" class="btn btn-danger text-primary" onclick="return confirm('Are you sure you want to  Remove @i.CategoryName')" />
+				</td>
+			</tr>
+			}
+
+
+		}
+
+	</tbody>
+</table>
+

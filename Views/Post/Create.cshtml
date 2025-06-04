@@ -1,0 +1,82 @@
+﻿@model PostCreateVM
+@{
+    ViewBag.Tittle = "Create a Post";
+}
+<h2 class="text-center">Create a new Blog</h2>
+
+<div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10 paste ">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.Post.Title" class="control-label"></label>
+                <input asp-for="@Model.Post.Title" class="form-control" />
+                <span asp-validation-for="@Model.Post.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Post.Content" class="control-label"></label>
+                <textarea id="textarea" asp-for="@Model.Post.Content" rows="6" cols="12" class="form-control "></textarea>
+                <span asp-validation-for="@Model.Post.Content" class="text-danger"></span>
+            </div>
+           
+            <div class="form-group">
+                <label asp-for="@Model.Categories" class="control-label"></label><br />
+                @foreach(var category in Model.Categories)
+                {
+                   
+                    <input type="checkbox" name="SelectedCategoryIds" value="@category.Value"/>
+                    <label>@category.Text</label> <br />
+                   
+                }
+            </div>
+           
+            
+            <div class="form-group">
+                <label asp-for="@Model.Post.ImageUrl" class="control-label"></label>
+                <input asp-for="@Model.Post.ImageUrl" hidden class="form-control" />
+                <input asp-for="@Model.Post.file" class="form-control" />
+                <span asp-validation-for="@Model.Post.ImageUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Post.Status" class="control-label"></label>
+                <select asp-for="@Model.Post.Status" asp-items="Html.GetEnumSelectList<Status>()" class="form-control">
+                    <option value="" disabled selected>--Select Status--</option>
+                </select>
+                <span asp-validation-for="@Model.Post.Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Post" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary text-warning text-center">Back</a>
+
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+   
+    <script src="https://cdn.tiny.cloud/1/aslqrj3cnmu6l1apmwze8rcttu1utnemco89ygnkqj4o58ca/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+        selector: 'textarea',
+       
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+               tinycomments_mode: 'embedded',
+          tinycomments_author: 'Author name',
+          mergetags_list: [
+            { value: 'First.Name', title: 'First Name' },
+            { value: 'Email', title: 'Email' },
+          ],
+          ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+
+        });
+    </script>
+	
+    
+    
+   
+}
+
+
+
